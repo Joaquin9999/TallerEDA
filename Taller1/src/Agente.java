@@ -1,32 +1,60 @@
 public class Agente {
     private int id;
     private int tiempoOcupado;
-    private Fila filaActual; 
+    public boolean ocupacion;
 
     public Agente(int id) {
         this.id = id;
         this.tiempoOcupado = 0;
-        this.filaActual = null;
+        this.ocupacion=false;
     }
 
-    
-    public void asignarFila(Fila fila) {
-        this.filaActual = fila;
+    public int getId() {
+        return id;
     }
 
-    
-    public void atenderPersona() {
-        if (filaActual != null && filaActual.tamanoFila() > 0) {
-            Persona personaActual = filaActual.obtenerPersona();
-            int tiempoEspera = calcularTiempoEspera(personaActual.getTiempoLlegada());
-            personaActual.setTiempoEspera(tiempoEspera);
-            tiempoOcupado += personaActual.getTiempoServicio();
-            System.out.println("Agente " + id + " atiende a Persona " + personaActual.getId() +
-                    " - Tiempo de espera: " + tiempoEspera + " - Tiempo de servicio: " + personaActual.getTiempoServicio());
-        } else {
-            System.out.println("Agente " + id + " en standby por 1 segundo");
-            tiempoOcupado++;
-        }
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public void setTiempoOcupado(int tiempoOcupado) {
+        this.tiempoOcupado = tiempoOcupado;
+    }
+
+
+    public boolean isOcupacion() {
+        return ocupacion;
+    }
+
+    public void setOcupacion(boolean ocupacion) {
+        this.ocupacion = ocupacion;
+    }
+    public void atenderPersona(Persona persona, int tiempoActual, int tiempoMaximo) {
+        int tiempoServicio = Math.min(persona.tiempoServicio, tiempoMaximo - tiempoActual);
+        persona.setTiempoEspera(tiempoActual - persona.tiempoLlegada);
+        this.tiempoOcupado += tiempoServicio;
+        ocupacion = true;
+        // Simular tiempo de servicio
+        tiempoActual += tiempoServicio;
+
+        ocupacion = false;
+    }
+
+    public void permanecerEnStandby() {
+        // Simular standby por un segundo
+        tiempoOcupado++;
+    }
+    public int obtenerTiempoOcupado() {
+        return tiempoOcupado;
+    }
+
+    @Override
+    public String toString() {
+        return "Agente{" +
+                "id=" + id +
+                ", tiempoOcupado=" + tiempoOcupado +
+                ", ocupacion=" + ocupacion +
+                '}';
     }
 
     private int calcularTiempoEspera(int tiempoLlegada) {
